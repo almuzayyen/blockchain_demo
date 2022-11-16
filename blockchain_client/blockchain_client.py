@@ -1,5 +1,8 @@
-from flask import Flask ,render_template
-
+from flask import Flask ,render_template, jsonify
+import Crypto
+import Crypto.Random
+import binascii
+from Crypto.PublicKey import RSA
 
 
 
@@ -28,4 +31,21 @@ def view_transaction():
 
 @app.route("/wallet/new")
 def new_wallet():
-    return " "
+    random_gen = Crypto.Random.new().read
+    private_key = RSA.generate(1024,random_gen)
+    public_key = private_key.public_key()
+    respons= {
+        'private_key':binascii.hexlify(private_key.export_key(format('DER'))).decode('ascii'),
+        'public_key':binascii.hexlify(public_key.export_key(format('DER'))).decode('ascii')
+    }
+    return jsonify(respons)
+
+
+
+if __name__ == '__main__':
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument('-p','--port',default=8081,type=int)
+    args = parser.parse_args()
+    port = args.port
+    app.run(host='127.0.0.1',port=port,debug=True)
