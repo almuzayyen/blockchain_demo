@@ -39,16 +39,16 @@ def index():
 @app.route("/generate/transaction",methods=['POST'])
 def generate_transaction():
 	
-	sender_public_key = request.form['sender_public_key']
+	sender_address = request.form['sender_address']
 	sender_private_key = request.form['sender_private_key']
-	recipient_public_key = request.form['recipient_public_key']
+	recipient_address = request.form['recipient_address']
 	value = request.form['amount']
 
-	transaction = Transaction(sender_public_key, sender_private_key, recipient_public_key, value)
+	transaction = Transaction(sender_address, sender_private_key, recipient_address, value)
 
 	response = {'transaction': transaction.to_dict(), 'signature': transaction.sign_transaction()}
 
-	return jsonify(response),201
+	return jsonify(response), 200
 
 @app.route("/make/transaction")
 def make_transaction():
@@ -77,4 +77,4 @@ if __name__ == '__main__':
     parser.add_argument('-p','--port',type=int)
     args = parser.parse_args()
     port = args.port
-    app.run(host='127.0.0.1',port=8081,debug=True)
+    app.run(host='127.0.0.1',port=8080,debug=True)
